@@ -1,0 +1,9 @@
+.item {
+  display: flex;
+  flex-direction: row;
+  padding-left: 10px;
+}
+
+.item_price{
+  margin-left: auto;
+}

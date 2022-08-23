@@ -1,0 +1,16 @@
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header h3 {
+  margin-left: 15px;
+  color: #6C6C6C;
+  font-weight: 400;
+}
+
+.header span {
+  margin-right: 5px;
+  font-weight: bold;
+}
