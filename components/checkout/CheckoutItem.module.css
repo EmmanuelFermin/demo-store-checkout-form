@@ -1,9 +1,16 @@
 .item {
   display: flex;
   flex-direction: row;
-  padding-left: 10px;
+  padding-left: 14px;
+  margin-bottom: 10px;
+  font-size: 0.9375rem;
 }
 
-.item_price{
+.item_name {
+  text-decoration: underline;
+  color: blue;
+}
+
+.item_price {
   margin-left: auto;
 }

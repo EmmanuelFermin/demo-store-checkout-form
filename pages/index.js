@@ -1,6 +1,5 @@
 import { Fragment } from "react";
 import CheckoutList from "../components/checkout/CheckoutList";
-import Container from "../components/layout/Container";
 import MainHeader from "../components/layout/MainHeader";
 
 const DUMMY_PRODUCTS = [
@@ -19,10 +18,8 @@ const DUMMY_PRODUCTS = [
 const CheckoutBilling = (props) => {
   return (
     <Fragment>
-      <Container>
-        <MainHeader />
-        <CheckoutList products={props.products} />
-      </Container>
+      <MainHeader />
+      <CheckoutList products={props.products} />
     </Fragment>
   );
 };

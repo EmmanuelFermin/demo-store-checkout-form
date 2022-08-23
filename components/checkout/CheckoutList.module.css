@@ -1,6 +1,8 @@
 .card {
-  width: 500px;
+  width: 600px;
   margin: auto;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 .title,
@@ -11,16 +13,33 @@
   font-weight: 500;
 }
 
+.products {
+  font-size: 17.72px;
+}
+
 .card ul {
   list-style: none;
-  /* margin: 0; */
+  margin-top: 0;
+  margin-bottom: 0;
   padding: 0;
 }
 
 .shipping_courier {
+  display: flex;
+  flex-direction: row;
+  padding-left: 14px;
+  font-size: 0.9375rem;
+}
 
+.shipping_courier p {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .shipping_fee {
   margin-left: auto;
+}
+
+.active {
+  background-color: red;
 }
