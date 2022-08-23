@@ -3,6 +3,7 @@ import { useState } from "react";
 import CheckoutItem from "./CheckoutItem";
 import PaymentTabs from "./PaymentTabs";
 import PaymentForm from "./PaymentForm";
+import NewPaymentForm from "./NewPaymentForm";
 
 const tabs = [
   {
@@ -21,27 +22,10 @@ const tabs = [
 
 const CheckoutList = (props) => {
   const [currentTab, setCurrentTab] = useState("isCreditCard");
-  const [filters, setFilters] = useState({
-    isCreditCard: true,
-    isGiftCard: null,
-    isPaypal: null,
-  });
-  console.log(filters);
 
   const handleTabsChange = (event) => {
     const { value } = event.target;
-    const updatedFilters = {
-      ...filters,
-      isCreditCard: null,
-      isGiftCard: null,
-      isPaypal: null,
-    };
-
-    updatedFilters[value] = true;
-
     console.log(value);
-    setFilters(updatedFilters);
-
     setCurrentTab(value);
   };
 
@@ -79,7 +63,6 @@ const CheckoutList = (props) => {
       <section>
         <h3>Payment method </h3>
         <PaymentTabs onChange={handleTabsChange} value={currentTab}>
-          {console.log(currentTab)}
           {tabs.map((tab) => (
             <button
               onClick={handleTabsChange}
@@ -94,6 +77,7 @@ const CheckoutList = (props) => {
         </PaymentTabs>
         {paymentMethodContent}
       </section>
+      <NewPaymentForm />
     </main>
   );
 };
