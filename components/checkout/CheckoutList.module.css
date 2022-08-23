@@ -5,15 +5,13 @@
   padding-bottom: 30px;
 }
 
-.title,
-.products,
-.shipping,
-.payment {
+.card h1,
+.card h3 {
   display: flex;
   font-weight: 500;
 }
 
-.products {
+.card h3 {
   font-size: 17.72px;
 }
 
@@ -24,14 +22,14 @@
   padding: 0;
 }
 
-.shipping_courier {
+.shipping {
   display: flex;
   flex-direction: row;
   padding-left: 14px;
   font-size: 0.9375rem;
 }
 
-.shipping_courier p {
+.shipping p {
   margin-top: 0;
   margin-bottom: 0;
 }

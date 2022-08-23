@@ -51,43 +51,50 @@ const CheckoutList = (props) => {
   if (currentTab === "isPaypal") paymentMethodContent = "Paypal";
 
   return (
-    <section className={classes.card}>
+    <main className={classes.card}>
       <h1 className={classes.title}>Checkout</h1>
-      <h3 className={classes.products}>Products </h3>
-      <ul className={classes.list}>
-        {props.products.map((product) => (
-          <CheckoutItem
-            key={product.id}
-            id={product.id}
-            name={product.name}
-            price={product.price}
-          />
-        ))}
-      </ul>
 
-      <h3 className={classes.shipping}>Shipping method </h3>
-      <div className={classes.shipping_courier}>
-        <p className={classes.shipping_name}>FedEx</p>
-        <p className={classes.shipping_fee}>${13.99}</p>
-      </div>
+      <section>
+        <h3>Products </h3>
+        <ul className={classes.list}>
+          {props.products.map((product) => (
+            <CheckoutItem
+              key={product.id}
+              id={product.id}
+              name={product.name}
+              price={product.price}
+            />
+          ))}
+        </ul>
+      </section>
 
-      <h3 className={classes.payment}>Payment method </h3>
-      <PaymentTabs onChange={handleTabsChange} value={currentTab}>
-        {console.log(currentTab)}
-        {tabs.map((tab) => (
-          <button
-            onClick={handleTabsChange}
-            className={currentTab === tab.value ? classes.active : ""}
-            key={tab.label}
-            name={tab.label}
-            value={tab.value}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </PaymentTabs>
-      {paymentMethodContent}
-    </section>
+      <section>
+        <h3>Shipping method </h3>
+        <div className={classes.shipping}>
+          <p className={classes.shipping_name}>FedEx</p>
+          <p className={classes.shipping_fee}>${13.99}</p>
+        </div>
+      </section>
+
+      <section>
+        <h3>Payment method </h3>
+        <PaymentTabs onChange={handleTabsChange} value={currentTab}>
+          {console.log(currentTab)}
+          {tabs.map((tab) => (
+            <button
+              onClick={handleTabsChange}
+              className={currentTab === tab.value ? classes.active : ""}
+              key={tab.label}
+              name={tab.label}
+              value={tab.value}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </PaymentTabs>
+        {paymentMethodContent}
+      </section>
+    </main>
   );
 };
 
