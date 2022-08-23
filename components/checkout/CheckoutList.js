@@ -2,6 +2,7 @@ import classes from "./CheckoutList.module.css";
 import { useState } from "react";
 import CheckoutItem from "./CheckoutItem";
 import PaymentTabs from "./PaymentTabs";
+import PaymentForm from "./PaymentForm";
 
 const tabs = [
   {
@@ -44,7 +45,7 @@ const CheckoutList = (props) => {
     setCurrentTab(value);
   };
 
-  let paymentMethodContent = "Credit Card Form";
+  let paymentMethodContent = <PaymentForm />;
 
   if (currentTab === "isGiftCard") paymentMethodContent = "Gift Card";
   if (currentTab === "isPaypal") paymentMethodContent = "Paypal";
