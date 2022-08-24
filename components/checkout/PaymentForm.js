@@ -52,7 +52,6 @@ const PaymentForm = (props) => {
   const formatAndSetCardExp = (e, type) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
-    console.log("Month Val ", type);
 
     if (valArray.length === 3) return;
     if (isNaN(valArray.join(""))) {
@@ -73,7 +72,7 @@ const PaymentForm = (props) => {
   const formatAndSetCardExpYear = (e, type) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
-    console.log("Year ", val);
+
     if (valArray.length === 3) return;
     if (isNaN(valArray.join(""))) {
       return;
@@ -87,7 +86,7 @@ const PaymentForm = (props) => {
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length >= 50) return;
-    if (/[^a-zA-Z\-\/]/.test(val)) {
+    if (/[^a-zA-Z ]/.test(val)) {
       return;
     } else {
       setCardHolder(val);
@@ -110,6 +109,15 @@ const PaymentForm = (props) => {
     setIsOpenModal(false);
   };
 
+  const currentYYandMMToLocalDate = (month, year) => {
+    const d = new Date();
+    let currYear = d.getFullYear();
+    let yy = currYear.toString().substring(0, 2);
+
+    const newDateToISO = new Date(`${yy + year}`, `${month - 1}`);
+    return newDateToISO.toString();
+  };
+
   return (
     <Formik
       initialValues={{
@@ -118,6 +126,7 @@ const PaymentForm = (props) => {
         cardExpYear: "",
         cardHolder: "",
         cardCVV: "",
+        isTermsAccepted: false,
         submit: null,
       }}
       validationSchema={Yup.object().shape({
@@ -126,24 +135,52 @@ const PaymentForm = (props) => {
         cardExpYear: Yup.number().min(1).max(99).required(),
         cardHolder: Yup.string().max(50).required(),
         cardCVV: Yup.string().min(3).max(3).required(),
+        isTermsAccepted: Yup.bool().oneOf(
+          [true],
+          "Accept Terms & Conditions is required"
+        ),
       })}
-      onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+      onSubmit={async (
+        values,
+        { setErrors, setStatus, setSubmitting, resetForm }
+      ) => {
         try {
-          // await login(values.email, values.password);
-          // if (mounted.current) {
-          //   setStatus({ success: true });
-          //   setSubmitting(false);
-          // }
+          if (values.isTermsAccepted === false) {
+            console.log(
+              "Please indicate that you have read and agree to the Terms and Conditions"
+            );
+            throw new Error(
+              "Please indicate that you have read and agree to the Terms and Conditions"
+            );
+            return;
+          }
+          console.log({
+            cardNum: values.cardNum.trim(),
+            cardExpMonth: values.cardExpMonth.trim(),
+            cardExpYear: values.cardExpYear.trim(),
+            cardExpiration: currentYYandMMToLocalDate(
+              values.cardExpMonth,
+              values.cardExpYear
+            ),
+            cardHolder: values.cardHolder.trim(),
+            cardCVV: values.cardCVV.trim(),
+            isTermsAndConditionsAccepted: values.isTermsAccepted,
+            totalPrice: props.totalcheckout + props.shipping,
+          });
+
+          setCcNumber("");
+          setExpMonth("");
+          setExpYear("");
+          setCardHolder("");
+          setCardCVV("");
+          resetForm();
+          setStatus({ success: true });
+          setSubmitting(false);
         } catch (err) {
-          // if (err.response.status === 422) {
-          //   err.message = "Invalid credentials";
-          // }
+          setStatus({ success: false });
+          setErrors({ submit: err.message });
+          setSubmitting(false);
           console.error(err);
-          // if (mounted.current) {
-          //   setStatus({ success: false });
-          //   setErrors({ submit: err.message });
-          //   setSubmitting(false);
-          // }
         }
       }}
     >
@@ -235,14 +272,16 @@ const PaymentForm = (props) => {
                     aria-describedby="cardExpMonth"
                     id="cardExpMonth"
                   />
-                  {touched.cardExpMonth && errors.cardExpMonth && (
-                    <FormHelperText
-                      id="cardExpMonth"
-                      className={classes.errorCardExp}
-                    >
-                      {"Month/Year is required with correct format/range"}
-                    </FormHelperText>
-                  )}
+                  {touched.cardExpMonth &&
+                    errors.cardExpMonth &&
+                    !errors.cardExpYear && (
+                      <FormHelperText
+                        id="cardExpMonth"
+                        className={classes.errorCardExp}
+                      >
+                        {"Month/Year is required with correct format/range"}
+                      </FormHelperText>
+                    )}
                   <span className={classes.control_divider}>/</span>
                   <TextField
                     name="cardExpYear"
@@ -262,13 +301,27 @@ const PaymentForm = (props) => {
                     sx={{ width: "43px" }}
                     id="cardExpYear"
                   />
-                  {touched.cardExpYear && errors.cardExpYear && (
+                  {touched.cardExpYear &&
+                  errors.cardExpYear &&
+                  !errors.cardExpMonth ? (
                     <FormHelperText
                       id="cardExpYear"
                       className={classes.errorCardExp}
                     >
                       {"Month/Year is required with correct format/range"}
                     </FormHelperText>
+                  ) : (
+                    touched.cardExpMonth &&
+                    touched.cardExpYear &&
+                    errors.cardExpYear &&
+                    errors.cardExpMonth && (
+                      <FormHelperText
+                        id="cardExpYear"
+                        className={classes.errorCardExp}
+                      >
+                        {"Month & Year is required with correct format/range"}
+                      </FormHelperText>
+                    )
                   )}
                 </div>
               </div>
@@ -288,7 +341,7 @@ const PaymentForm = (props) => {
                   fullWidth
                   error={Boolean(touched.cardHolder && errors.cardHolder)}
                   // helperText={touched.cardHolder && errors.cardHolder}
-                  inputProps={{ maxLength: 2 }}
+                  inputProps={{ maxLength: 50 }}
                   onBlur={handleBlur}
                   onChange={(e) => {
                     handleChange(e);
@@ -365,45 +418,65 @@ const PaymentForm = (props) => {
                   size="small"
                   sx={{ width: "87px" }}
                 />
-                {/* {touched.cardCVV &&
-                  errors.cardCVV ===
-                    "cardCVV must be greater than or equal to 999" && (
-                    <FormHelperText
-                      id="cardExpYear"
-                      className={classes.errorCardCVV}
-                    >
-                      3 digits
-                    </FormHelperText>
-                  )} */}
-                {console.log(errors.cardCVV)}
-                {touched.cardCVV && errors.cardCVV && (
-                  <FormHelperText
-                    id="cardExpYear"
-                    className={classes.errorCardCVV}
-                  >
-                    CVV/CVC is required and minimum of 3 digits
-                  </FormHelperText>
-                )}
               </div>
+              {touched.cardCVV && errors.cardCVV && (
+                <FormHelperText
+                  id="cardExpYear"
+                  className={classes.errorCardCVV}
+                >
+                  CVV/CVC is required and minimum of 3 digits
+                </FormHelperText>
+              )}
             </div>
+          </section>
+
+          <section className={classes.termsAndConditions}>
+            <div
+              className={
+                classes[
+                  `${
+                    touched.isTermsAccepted && errors.isTermsAccepted
+                      ? "termsAndConditions_content--error"
+                      : "termsAndConditions_content"
+                  }`
+                ]
+              }
+            >
+              <Checkbox
+                onClick={() => (touched.isTermsAccepted = true)}
+                onBlur={handleBlur}
+                checked={values.isTermsAccepted === true ? true : false}
+                onChange={(e) => {
+                  handleChange(e);
+                  console.log(touched.isTermsAccepted);
+                  setFieldValue("isTermsAccepted", !values.isTermsAccepted);
+                }}
+                inputProps={{ "aria-label": "controlled" }}
+                className={classes.termsAndConditions_checkbox}
+                size="small"
+                name="isTermsAccepted"
+              />{" "}
+              I accept the{" "}
+              <span
+                className={classes.termsAndConditions_checkbox__portal}
+                onClick={() => setIsOpenModal(true)}
+              >
+                Terms and Condition
+              </span>
+            </div>
+            {touched.isTermsAccepted && errors.isTermsAccepted && (
+              <FormHelperText
+                id="isTermsAccepted"
+                className={classes.errorIsTermsAccepted}
+              >
+                Please indicate that you have read and agree to the Terms and
+                Conditions
+              </FormHelperText>
+            )}
           </section>
           {errors.submit && (
             <FormHelperText error>{errors.submit}</FormHelperText>
           )}
-
-          <div className={classes.termsAndConditions}>
-            <Checkbox
-              className={classes.termsAndConditions_checkbox}
-              size="small"
-            />{" "}
-            I accept the{" "}
-            <span
-              className={classes.termsAndConditions_checkbox__portal}
-              onClick={() => setIsOpenModal(true)}
-            >
-              Terms and Condition
-            </span>
-          </div>
 
           <TermsModal open={isOpenModal} onClose={handleCloseModal} />
 
