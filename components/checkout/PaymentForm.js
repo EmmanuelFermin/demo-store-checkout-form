@@ -23,6 +23,7 @@ const PaymentForm = (props) => {
   const [ccNumber, setCcNumber] = useState("");
   const [expMonth, setExpMonth] = useState("");
   const [expYear, setExpYear] = useState("");
+  const [cardHolder, setCardHolder] = useState("");
   const [cardCVV, setCardCVV] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
 
@@ -51,21 +52,53 @@ const PaymentForm = (props) => {
   const formatAndSetCardExp = (e, type) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
+    console.log("Month Val ", type);
 
     if (valArray.length === 3) return;
     if (isNaN(valArray.join(""))) {
       return;
     } else {
-      if (type === "month") setExpMonth(val);
+      if (type === "month") {
+        if (/[0-9]|1[0-2]/.test(val)) {
+          setExpMonth(val);
+        } else if (val === "") {
+          setExpMonth("");
+        }
+      }
+      if (type === "year" && valArray.length > 2) setExpYear(parseInt(val, 10));
       if (type === "year") setExpYear(val);
     }
   };
 
-  const formatAndSetCVV = (e, type) => {
+  const formatAndSetCardExpYear = (e, type) => {
+    let val = e.target.value;
+    const valArray = val.split(" ").join("").split("");
+    console.log("Year ", val);
+    if (valArray.length === 3) return;
+    if (isNaN(valArray.join(""))) {
+      return;
+    } else {
+      setExpYear(val);
+    }
+  };
+
+  const restrictAndFormatHolder = (e) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
 
-    if (valArray.length >= 4 || valArray.length <= 2) return;
+    if (valArray.length >= 50) return;
+    if (/[^a-zA-Z\-\/]/.test(val)) {
+      return;
+    } else {
+      setCardHolder(val);
+    }
+  };
+
+  const formatAndSetCVV = (e) => {
+    let val = e.target.value;
+    const valArray = val.split(" ").join("").split("");
+
+    if (valArray.length >= 4) return;
     if (isNaN(valArray.join(""))) {
       return;
     } else {
@@ -89,10 +122,10 @@ const PaymentForm = (props) => {
       }}
       validationSchema={Yup.object().shape({
         cardNum: Yup.number().required(),
-        cardExpMonth: Yup.number().max(31).required(),
-        cardExpYear: Yup.number().max(99).required(),
-        cardHolder: Yup.string().max(180).required(),
-        cardCVV: Yup.number().max(999).required(),
+        cardExpMonth: Yup.number().min(1).max(12).required(),
+        cardExpYear: Yup.number().min(1).max(99).required(),
+        cardHolder: Yup.string().max(50).required(),
+        cardCVV: Yup.string().min(3).max(3).required(),
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
@@ -197,6 +230,7 @@ const PaymentForm = (props) => {
                     type="text"
                     variant="outlined"
                     size="small"
+                    inputProps={{ maxLength: 2 }}
                     sx={{ width: "43px" }}
                     aria-describedby="cardExpMonth"
                     id="cardExpMonth"
@@ -206,7 +240,7 @@ const PaymentForm = (props) => {
                       id="cardExpMonth"
                       className={classes.errorCardExp}
                     >
-                      Month/Year is required
+                      {"Month/Year is required with correct format/range"}
                     </FormHelperText>
                   )}
                   <span className={classes.control_divider}>/</span>
@@ -218,8 +252,9 @@ const PaymentForm = (props) => {
                     onBlur={handleBlur}
                     onChange={(e) => {
                       handleChange(e);
-                      formatAndSetCardExp(e, "year");
+                      formatAndSetCardExpYear(e, "year");
                     }}
+                    inputProps={{ maxLength: 2 }}
                     value={(values.cardExpYear = expYear)}
                     type="text"
                     variant="outlined"
@@ -232,7 +267,7 @@ const PaymentForm = (props) => {
                       id="cardExpYear"
                       className={classes.errorCardExp}
                     >
-                      Month/Year is required
+                      {"Month/Year is required with correct format/range"}
                     </FormHelperText>
                   )}
                 </div>
@@ -253,9 +288,13 @@ const PaymentForm = (props) => {
                   fullWidth
                   error={Boolean(touched.cardHolder && errors.cardHolder)}
                   // helperText={touched.cardHolder && errors.cardHolder}
+                  inputProps={{ maxLength: 2 }}
                   onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.cardHolder}
+                  onChange={(e) => {
+                    handleChange(e);
+                    restrictAndFormatHolder(e);
+                  }}
+                  value={(values.cardHolder = cardHolder)}
                   type="text"
                   variant="outlined"
                   size="small"
@@ -286,22 +325,11 @@ const PaymentForm = (props) => {
                   autoComplete="off"
                   error={Boolean(touched.cardCVV && errors.cardCVV)}
                   // helperText={touched.cardCVV && errors.cardCVV}
+                  inputProps={{ maxLength: 3 }}
                   InputProps={{
                     endAdornment: (
                       <Tooltip
                         classes={{ tooltip: classes.customTooltip }}
-                        // componentsProps={{
-
-                        //   tooltip: {
-                        //     sx: {
-                        //       bgcolor: "white",
-                        //       color: "black",
-                        //       "& .MuiTooltip-arrow": {
-                        //         color: "black",
-                        //       },
-                        //     },
-                        //   },
-                        // }}
                         title={
                           <React.Fragment>
                             Tooltip with HTML
@@ -327,19 +355,33 @@ const PaymentForm = (props) => {
                     },
                   }}
                   onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.cardCVV}
+                  onChange={(e) => {
+                    handleChange(e);
+                    formatAndSetCVV(e);
+                  }}
+                  value={(values.cardCVV = cardCVV)}
                   type="text"
                   variant="outlined"
                   size="small"
                   sx={{ width: "87px" }}
                 />
+                {/* {touched.cardCVV &&
+                  errors.cardCVV ===
+                    "cardCVV must be greater than or equal to 999" && (
+                    <FormHelperText
+                      id="cardExpYear"
+                      className={classes.errorCardCVV}
+                    >
+                      3 digits
+                    </FormHelperText>
+                  )} */}
+                {console.log(errors.cardCVV)}
                 {touched.cardCVV && errors.cardCVV && (
                   <FormHelperText
                     id="cardExpYear"
                     className={classes.errorCardCVV}
                   >
-                    CVV/CVC is required
+                    CVV/CVC is required and minimum of 3 digits
                   </FormHelperText>
                 )}
               </div>
