@@ -1,12 +1,12 @@
 .card {
-  width: 600px;
+  width: 556px;
   margin: auto;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-top: 32px;
+  padding-bottom: 32px;
 }
 
-.card h1,
-.card h3 {
+.card h2,
+.card h3{
   display: flex;
   font-weight: 500;
 }
@@ -22,16 +22,20 @@
   padding: 0;
 }
 
+.card section {
+  margin-bottom: 27px;
+}
+
 .shipping {
   display: flex;
   flex-direction: row;
   padding-left: 14px;
-  font-size: 0.9375rem;
 }
 
 .shipping p {
   margin-top: 0;
   margin-bottom: 0;
+  font-size: 15px;
 }
 
 .shipping_fee {
@@ -39,5 +43,7 @@
 }
 
 .active {
-  background-color: red;
+  background-color: #4169e2 !important;
+  color: white !important;
+  border: none;
 }

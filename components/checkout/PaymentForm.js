@@ -124,16 +124,17 @@ const PaymentForm = (props) => {
         values,
         setFieldValue,
       }) => (
-        <form
-          noValidate
-          onSubmit={handleSubmit}
-          {...props}
-          className={classes.formControl}
-        >
+        <form noValidate onSubmit={handleSubmit} {...props}>
           <section className={classes.formGroup}>
             <div className={classes.column__bordered}>
               <div className={classes.control}>
-                <InputLabel htmlFor="cardNum">Card number*</InputLabel>
+                <InputLabel
+                  htmlFor="cardNum"
+                  classes={{ asterisk: classes.asterisk }}
+                  required
+                >
+                  Card number
+                </InputLabel>
                 <TextField
                   id="cardNum"
                   name="cardNum"
@@ -147,8 +148,8 @@ const PaymentForm = (props) => {
                         <Image
                           src={CardIcon}
                           alt="Logo of Demo Store"
-                          width={51}
-                          height={30}
+                          width={56}
+                          height={35}
                         />
                       </InputAdornment>
                     ),
@@ -174,8 +175,12 @@ const PaymentForm = (props) => {
               </div>
 
               <div className={classes.control}>
-                <InputLabel htmlFor="cardExpMonth">
-                  {"Valid thru (mm/yy)"}*
+                <InputLabel
+                  htmlFor="cardExpMonth"
+                  classes={{ asterisk: classes.asterisk }}
+                  required
+                >
+                  {"Valid thru (mm/yy)"}
                 </InputLabel>
                 <div className={classes.control_children}>
                   <TextField
@@ -192,7 +197,7 @@ const PaymentForm = (props) => {
                     type="text"
                     variant="outlined"
                     size="small"
-                    sx={{ width: "50px" }}
+                    sx={{ width: "43px" }}
                     aria-describedby="cardExpMonth"
                     id="cardExpMonth"
                   />
@@ -219,7 +224,7 @@ const PaymentForm = (props) => {
                     type="text"
                     variant="outlined"
                     size="small"
-                    sx={{ width: "50px" }}
+                    sx={{ width: "43px" }}
                     id="cardExpYear"
                   />
                   {touched.cardExpYear && errors.cardExpYear && (
@@ -234,8 +239,12 @@ const PaymentForm = (props) => {
               </div>
 
               <div className={classes.control}>
-                <InputLabel htmlFor="cardHolder">
-                  {"Cardholder's name"}*
+                <InputLabel
+                  htmlFor="cardHolder"
+                  classes={{ asterisk: classes.asterisk }}
+                  required
+                >
+                  {"Cardholder's name"}
                 </InputLabel>
                 <TextField
                   id="cardHolder"
@@ -264,7 +273,13 @@ const PaymentForm = (props) => {
 
             <div className={classes.column}>
               <div className={classes.control}>
-                <InputLabel htmlFor="cardCVV">CVV/CVC*</InputLabel>
+                <InputLabel
+                  htmlFor="cardCVV"
+                  classes={{ asterisk: classes.asterisk }}
+                  required
+                >
+                  CVV/CVC
+                </InputLabel>
                 <TextField
                   id="cardCVV"
                   name="cardCVV"
@@ -317,7 +332,7 @@ const PaymentForm = (props) => {
                   type="text"
                   variant="outlined"
                   size="small"
-                  sx={{ width: "75px" }}
+                  sx={{ width: "87px" }}
                 />
                 {touched.cardCVV && errors.cardCVV && (
                   <FormHelperText
@@ -357,7 +372,11 @@ const PaymentForm = (props) => {
               type="submit"
               variant="contained"
             >
-              Place Order
+              {`Place order ( $${
+                props.totalcheckout === undefined
+                  ? 0
+                  : props.totalcheckout + props.shipping
+              } )`}
             </Button>
           </section>
         </form>

@@ -1,5 +1,5 @@
 import classes from "./CheckoutList.module.css";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import CheckoutItem from "./CheckoutItem";
 import PaymentTabs from "./PaymentTabs";
 import PaymentForm from "./PaymentForm";
@@ -19,8 +19,27 @@ const tabs = [
   },
 ];
 
-const CheckoutList = (props) => {
+const CheckoutList = ({ products, shipping }) => {
   const [currentTab, setCurrentTab] = useState("isCreditCard");
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [shippingFee, setShippingFee] = useState(0);
+
+  const getShippingFee = useCallback(async () => {
+    const fee = await shipping.map((item) => item.fee);
+    setShippingFee(Number(fee.toString()));
+  }, [shipping]);
+
+  const getProducts = useCallback(async () => {
+    const sum = await products.reduce(
+      (currentTotal, obj) => currentTotal.price + obj.price
+    );
+    setTotalPrice(sum);
+  }, [products]);
+
+  useEffect(() => {
+    getProducts();
+    getShippingFee();
+  }, [getProducts, getShippingFee]);
 
   const handleTabsChange = (event) => {
     const { value } = event.target;
@@ -28,19 +47,21 @@ const CheckoutList = (props) => {
     setCurrentTab(value);
   };
 
-  let paymentMethodContent = <PaymentForm />;
+  let paymentMethodContent = (
+    <PaymentForm totalcheckout={totalPrice} shipping={shippingFee} />
+  );
 
   if (currentTab === "isGiftCard") paymentMethodContent = "Gift Card";
   if (currentTab === "isPaypal") paymentMethodContent = "Paypal";
 
   return (
     <main className={classes.card}>
-      <h1 className={classes.title}>Checkout</h1>
+      <h2 className={classes.title}>Checkout</h2>
 
       <section>
         <h3>Products </h3>
         <ul className={classes.list}>
-          {props.products.map((product) => (
+          {products.map((product) => (
             <CheckoutItem
               key={product.id}
               id={product.id}
@@ -54,8 +75,8 @@ const CheckoutList = (props) => {
       <section>
         <h3>Shipping method </h3>
         <div className={classes.shipping}>
-          <p className={classes.shipping_name}>FedEx</p>
-          <p className={classes.shipping_fee}>${13.99}</p>
+          <p className={classes.shipping_name}>{shipping[0].courier}</p>
+          <p className={classes.shipping_fee}>${shipping[0].fee}</p>
         </div>
       </section>
 

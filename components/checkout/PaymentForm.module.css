@@ -30,27 +30,41 @@
   color: #d32f2f;
 }
 
+.asterisk {
+  color: #d32f2f;
+}
+
 .control {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   position: relative;
 }
 
 .control label {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 800;
   color: #27272f;
+  margin-bottom: 4px;
 }
 
 .control fieldset {
   border-radius: 0;
+  border-color: #b1b6bc;
 }
 
 .control input {
-  padding-top: 3px;
-  padding-bottom: 4px;
+  height: 20px;
+  padding-top: 4px;
+  padding-bottom: 10px;
+}
+
+.control_children input {
+  height: 18px;
+  padding-top: 4px;
+  padding-bottom: 6px;
+  padding-right: 1px;
 }
 
 .endAdornment {
@@ -67,24 +81,26 @@
   border-width: 1px;
   border-color: #dde2e5;
   border-style: solid;
-  padding: 20px 20px 5px 20px;
+  padding: 18px 20px 7px 20px;
   margin-right: 15px;
 }
 
 .control_divider {
+  font-size: 10px;
+  font-weight: 700;
   padding-left: 5px;
-  padding-right: 5px;
+  padding-right: 8px;
 }
 
 .termsAndConditions {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  border: 1px solid #eaeef1;
+  border: 1px solid #e1e5e8;
   background-color: #fcfcfc;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding: 10px 20px 10px 20px;
+  margin-top: 27px;
+  margin-bottom: 21px;
+  padding: 11px 20px 11px 20px;
   font-size: 14px;
 }
 
@@ -96,16 +112,18 @@
 }
 
 .termsAndConditions_checkbox__portal {
-  color: #39505e;
+  color: #336881;
   margin-left: 3px;
-  border-bottom: 2px dotted #39505e;
+  border-bottom: 2px dotted #336881;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .actions button {
   background-color: #ff5319;
   text-transform: none;
-  padding: 10px;
+  padding: 11.5px;
+  font-size: 14px;
 }
 
 .actions button:hover {
