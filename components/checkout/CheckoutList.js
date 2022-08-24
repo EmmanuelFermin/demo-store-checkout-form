@@ -3,7 +3,6 @@ import { useState } from "react";
 import CheckoutItem from "./CheckoutItem";
 import PaymentTabs from "./PaymentTabs";
 import PaymentForm from "./PaymentForm";
-import NewPaymentForm from "./NewPaymentForm";
 
 const tabs = [
   {
@@ -77,7 +76,6 @@ const CheckoutList = (props) => {
         </PaymentTabs>
         {paymentMethodContent}
       </section>
-      <NewPaymentForm />
     </main>
   );
 };
