@@ -30,3 +30,18 @@ a {
   font-family: "Helvetica";
   src: url("../assets/fonts/Helvetica/Helvetica.ttf") format("truetype");
 }
+@font-face {
+  font-family: "OpenSans";
+  src: url("../assets/fonts/OpenSans/OpenSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "OpenSans";
+  src: url("../assets/fonts/OpenSans/OpenSans-SemiBold.ttf") format("truetype");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "OpenSans";
+  src: url("../assets/fonts/OpenSans/OpenSans-ExtraBold.ttf") format("truetype");
+  font-weight: bold;
+}

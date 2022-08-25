@@ -18,3 +18,8 @@
   top: 0;
   left: 0;
 }
+
+.modal_wrapper p {
+  text-align: left;
+  margin-top: 2rem;
+}

@@ -92,7 +92,11 @@ const CheckoutBilling = ({ products, shipping }) => {
           {tabs.map((tab) => (
             <button
               onClick={handleTabsChange}
-              className={currentTab === tab.value ? classes.active : ""}
+              className={
+                currentTab === tab.value
+                  ? classes[`btn_${tab.value}--active`]
+                  : classes[`btn_${tab.value}`]
+              }
               key={tab.label}
               name={tab.label}
               value={tab.value}

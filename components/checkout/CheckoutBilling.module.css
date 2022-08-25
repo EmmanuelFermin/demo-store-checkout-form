@@ -1,5 +1,5 @@
 .card {
-  width: 556px;
+  width: 563px;
   margin: auto;
   padding-top: 22px;
   padding-bottom: 22px;
@@ -27,6 +27,31 @@
   margin-bottom: 27px;
 }
 
+.btn_isCreditCard,
+.btn_isCreditCard--active {
+  width: 180px;
+  padding: 0 !important;
+}
+.btn_isGiftCard {
+  width: 178px;
+}
+.btn_isPaypal {
+  width: 178px;
+}
+
+.btn_isCreditCard--active,
+.btn_isGiftCard--active,
+.btn_isPaypal--active {
+  background-color: #4169e2 !important;
+  color: white !important;
+  border: none;
+}
+/* btn_isCreditCard 183.91
+ btn_isGiftCard 167.83
+ btn_isPaypal 154.95 */
+
+/* */
+
 .shipping {
   display: flex;
   flex-direction: row;
@@ -40,16 +65,12 @@
 }
 
 .shipping_name {
+  font-family: OpenSans;
   font-weight: 500;
 }
 
 .shipping_fee {
   margin-left: auto;
+  font-family: OpenSans;
   font-weight: 500;
-}
-
-.active {
-  background-color: #4169e2 !important;
-  color: white !important;
-  border: none;
 }

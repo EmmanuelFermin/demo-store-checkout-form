@@ -1,4 +1,4 @@
-.formGroup {
+.creditCardInformation {
   border: none;
   display: flex;
   padding-left: 0;
@@ -37,7 +37,7 @@
   color: #d32f2f;
 }
 
-.errorIsTermsAccepted {
+.termsAndConditions_helperText--error {
   position: absolute;
   bottom: -22px;
   margin-left: 14px;
@@ -45,12 +45,12 @@
 }
 
 .asterisk {
-  font-size: 17px;
+  /* font-size: 17px; */
   color: #d32f2f;
-  margin-left: -2px;
+  /* margin-left: -2px; */
 }
 
-.control {
+.creditCardInformation_control {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -58,20 +58,21 @@
   position: relative;
 }
 
-.control label {
-  font-family: Arial;
+.creditCardInformation_control label {
+  /* font-family: Arial; */
+  font-family: OpenSans;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: bold;
   color: #27272f;
   margin-bottom: 4px;
 }
 
-.control fieldset {
+.creditCardInformation_control fieldset {
   border-radius: 0;
   border-color: #b1b6bc;
 }
 
-.control input {
+.creditCardInformation_control input {
   height: 20px;
   padding-top: 4px;
   padding-bottom: 10px;
@@ -93,18 +94,17 @@
   /* padding-bottom: 2px; */
 }
 
-.column {
-  padding-top: 21px;
-  position: relative;
-}
-
-.column__bordered {
+.creditCardInformation_column--bordered {
   border-radius: 5px;
   border-width: 1px;
   border-color: #dde2e5;
   border-style: solid;
   padding: 18px 20px 7px 20px;
   margin-right: 15px;
+}
+.column {
+  padding-top: 21px;
+  position: relative;
 }
 
 .control_divider {
@@ -119,7 +119,7 @@
   margin-bottom: 10px !important;
 }
 
-.termsAndConditions_content {
+.termsAndConditions_wrapper {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -131,7 +131,7 @@
   font-size: 14px;
 }
 
-.termsAndConditions_content--error {
+.termsAndConditions_wrapper--error {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -150,7 +150,15 @@
   align-self: center;
 }
 
-.termsAndConditions_checkbox svg {
+.termsAndConditions_checkbox--checked {
+  width: 20px;
+  height: 20px;
+  opacity: 1;
+  align-self: center;
+}
+
+.termsAndConditions_checkbox svg,
+.termsAndConditions_checkbox--checked svg {
   width: 0.85rem;
   height: 0.85rem;
 }
@@ -158,7 +166,7 @@
 .termsAndConditions_checkbox--underlined {
   color: #336881;
   margin-left: 3px;
-  border-bottom: 2px dotted #336881;
+  border-bottom: 1.5px dotted #336881;
   cursor: pointer;
   font-weight: 500;
 }

@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
 import classes from "./CreditCardPaymentForm.module.css";
 import * as Yup from "yup";
-import { Formik } from "formik";
+import { Formik, FastField } from "formik";
 import {
   Button,
   Checkbox,
@@ -18,22 +18,21 @@ import InfoIcon from "../../public/static/info.png";
 import TermsModal from "../terms-and-conditions/TermsModal";
 import CVVTooltip from "./CVVTooltip";
 import dateFormatToLocal from "../../utils/dateFormatToLocal";
-// import Portal from "../../HOC/Portal";
 
 // Main FC (Functional Component)
 const CreditCardPaymentForm = (props) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = document.querySelector("#terms-modal");
-    // setMounted(true)
-  }, []);
-  console.log(ref.current);
+  const divPortalRef = useRef();
   const [ccNumber, setCcNumber] = useState("");
   const [expMonth, setExpMonth] = useState("");
   const [expYear, setExpYear] = useState("");
   const [cardHolder, setCardHolder] = useState("");
   const [cardCVV, setCardCVV] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
+
+  useEffect(() => {
+    // Get root Node Element and assign to the Portal
+    divPortalRef.current = document.querySelector("#terms-modal");
+  }, []);
 
   const formatAndSetCcNumber = (e) => {
     let val = e.target.value;
@@ -125,15 +124,13 @@ const CreditCardPaymentForm = (props) => {
         { setErrors, setStatus, setSubmitting, resetForm }
       ) => {
         try {
+          // Check if Terms and Conditions accepted. If not, throw error and don't proceed succeeding codes
           if (values.isTermsAccepted === false) {
-            console.log(
-              "Please indicate that you have read and agree to the Terms and Conditions"
-            );
             throw new Error(
               "Please indicate that you have read and agree to the Terms and Conditions"
             );
-            return;
           }
+          // Assign API CALL here
           console.log({
             cardNum: values.cardNum.trim(),
             cardExpMonth: values.cardExpMonth.trim(),
@@ -175,9 +172,12 @@ const CreditCardPaymentForm = (props) => {
         setFieldValue,
       }) => (
         <form noValidate onSubmit={handleSubmit} {...props}>
-          <section className={classes.formGroup}>
-            <div className={classes.column__bordered}>
-              <div className={classes.control}>
+          <section
+            className={classes.creditCardInformation}
+            aria-label="Credit Card Information"
+          >
+            <div className={classes["creditCardInformation_column--bordered"]}>
+              <div className={classes["creditCardInformation_control"]}>
                 <InputLabel
                   htmlFor="cardNum"
                   classes={{ asterisk: classes.asterisk }}
@@ -186,12 +186,17 @@ const CreditCardPaymentForm = (props) => {
                   Card number
                 </InputLabel>
                 <TextField
+                  aria-describedby="cardNum"
                   id="cardNum"
                   name="cardNum"
                   autoComplete="off"
-                  fullWidth
                   error={Boolean(touched.cardNum && errors.cardNum)}
-                  // helperText={touched.cardNum && errors.cardNum}
+                  onBlur={handleBlur}
+                  onChange={(e) => {
+                    handleChange(e);
+                    formatAndSetCcNumber(e);
+                  }}
+                  value={(values.cardNum = ccNumber)}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -207,15 +212,10 @@ const CreditCardPaymentForm = (props) => {
                       adornedEnd: classes.endAdornment,
                     },
                   }}
-                  onBlur={handleBlur}
-                  onChange={(e) => {
-                    handleChange(e);
-                    formatAndSetCcNumber(e);
-                  }}
-                  value={(values.cardNum = ccNumber)}
-                  type="text"
                   variant="outlined"
                   size="small"
+                  type="text"
+                  fullWidth
                 />
                 {touched.cardNum && errors.cardNum && (
                   <FormHelperText id="cardNum" className={classes.errorCardNum}>
@@ -224,7 +224,7 @@ const CreditCardPaymentForm = (props) => {
                 )}
               </div>
 
-              <div className={classes.control}>
+              <div className={classes["creditCardInformation_control"]}>
                 <InputLabel
                   htmlFor="cardExpMonth"
                   classes={{ asterisk: classes.asterisk }}
@@ -234,23 +234,22 @@ const CreditCardPaymentForm = (props) => {
                 </InputLabel>
                 <div className={classes.control_children}>
                   <TextField
+                    aria-describedby="cardExpMonth"
+                    id="cardExpMonth"
                     name="cardExpMonth"
                     autoComplete="off"
                     error={Boolean(touched.cardExpMonth && errors.cardExpMonth)}
-                    // helperText={touched.cardExpMonth && errors.cardExpMonth}
                     onBlur={handleBlur}
                     onChange={(e) => {
                       handleChange(e);
                       formatAndSetCardExpMonth(e);
                     }}
                     value={(values.cardExpMonth = expMonth)}
-                    type="text"
-                    variant="outlined"
-                    size="small"
                     inputProps={{ maxLength: 2 }}
                     sx={{ width: "43px" }}
-                    aria-describedby="cardExpMonth"
-                    id="cardExpMonth"
+                    variant="outlined"
+                    size="small"
+                    type="text"
                   />
                   {touched.cardExpMonth &&
                     errors.cardExpMonth &&
@@ -269,7 +268,6 @@ const CreditCardPaymentForm = (props) => {
                     name="cardExpYear"
                     autoComplete="off"
                     error={Boolean(touched.cardExpYear && errors.cardExpYear)}
-                    // helperText={touched.cardExpYear && errors.cardExpYear}
                     onBlur={handleBlur}
                     onChange={(e) => {
                       handleChange(e);
@@ -307,7 +305,7 @@ const CreditCardPaymentForm = (props) => {
                 </div>
               </div>
 
-              <div className={classes.control}>
+              <div className={classes["creditCardInformation_control"]}>
                 <InputLabel
                   htmlFor="cardHolder"
                   classes={{ asterisk: classes.asterisk }}
@@ -316,22 +314,22 @@ const CreditCardPaymentForm = (props) => {
                   {"Cardholder's name"}
                 </InputLabel>
                 <TextField
+                  aria-describedby="cardHolder"
                   id="cardHolder"
                   name="cardHolder"
                   autoComplete="off"
-                  fullWidth
                   error={Boolean(touched.cardHolder && errors.cardHolder)}
-                  // helperText={touched.cardHolder && errors.cardHolder}
-                  inputProps={{ maxLength: 50 }}
                   onBlur={handleBlur}
                   onChange={(e) => {
                     handleChange(e);
                     restrictAndFormatCardHolder(e);
                   }}
                   value={(values.cardHolder = cardHolder)}
-                  type="text"
+                  inputProps={{ maxLength: 50 }}
                   variant="outlined"
                   size="small"
+                  type="text"
+                  fullWidth
                 />
                 {touched.cardHolder && errors.cardHolder && (
                   <FormHelperText
@@ -345,7 +343,7 @@ const CreditCardPaymentForm = (props) => {
             </div>
 
             <div className={classes.column}>
-              <div className={classes.control}>
+              <div className={classes["creditCardInformation_control"]}>
                 <InputLabel
                   htmlFor="cardCVV"
                   classes={{ asterisk: classes.asterisk }}
@@ -354,12 +352,17 @@ const CreditCardPaymentForm = (props) => {
                   CVV/CVC
                 </InputLabel>
                 <TextField
+                  aria-describedby="cardCVV"
                   id="cardCVV"
                   name="cardCVV"
                   autoComplete="off"
                   error={Boolean(touched.cardCVV && errors.cardCVV)}
-                  // helperText={touched.cardCVV && errors.cardCVV}
-                  inputProps={{ maxLength: 3 }}
+                  onBlur={handleBlur}
+                  onChange={(e) => {
+                    handleChange(e);
+                    formatAndSetCVV(e);
+                  }}
+                  value={(values.cardCVV = cardCVV)}
                   InputProps={{
                     endAdornment: (
                       <Tooltip
@@ -381,16 +384,11 @@ const CreditCardPaymentForm = (props) => {
                       adornedEnd: classes.endAdornment,
                     },
                   }}
-                  onBlur={handleBlur}
-                  onChange={(e) => {
-                    handleChange(e);
-                    formatAndSetCVV(e);
-                  }}
-                  value={(values.cardCVV = cardCVV)}
-                  type="text"
+                  inputProps={{ maxLength: 3 }}
+                  sx={{ width: "87px" }}
                   variant="outlined"
                   size="small"
-                  sx={{ width: "87px" }}
+                  type="text"
                 />
               </div>
               {touched.cardCVV && errors.cardCVV && (
@@ -404,30 +402,36 @@ const CreditCardPaymentForm = (props) => {
             </div>
           </section>
 
-          <section className={classes.termsAndConditions}>
+          <section
+            className={classes.termsAndConditions}
+            aria-label="Terms and Conditions Acceptance"
+          >
             <div
               className={
                 classes[
                   `${
                     touched.isTermsAccepted && errors.isTermsAccepted
-                      ? "termsAndConditions_content--error"
-                      : "termsAndConditions_content"
+                      ? "termsAndConditions_wrapper--error"
+                      : "termsAndConditions_wrapper"
                   }`
                 ]
               }
             >
               <Checkbox
-                onClick={() => (touched.isTermsAccepted = true)}
-                onBlur={handleBlur}
+                name="isTermsAccepted"
+                className={
+                  values.isTermsAccepted
+                    ? classes["termsAndConditions_checkbox--checked"]
+                    : classes["termsAndConditions_checkbox"]
+                }
+                inputProps={{ "aria-label": "controlled" }}
+                size="small"
                 checked={values.isTermsAccepted === true ? true : false}
+                onClick={() => (touched.isTermsAccepted = true)}
                 onChange={(e) => {
                   handleChange(e);
                   setFieldValue("isTermsAccepted", !values.isTermsAccepted);
                 }}
-                inputProps={{ "aria-label": "controlled" }}
-                className={classes.termsAndConditions_checkbox}
-                size="small"
-                name="isTermsAccepted"
               />{" "}
               I accept the{" "}
               <span
@@ -440,7 +444,7 @@ const CreditCardPaymentForm = (props) => {
             {touched.isTermsAccepted && errors.isTermsAccepted && (
               <FormHelperText
                 id="isTermsAccepted"
-                className={classes.errorIsTermsAccepted}
+                className={classes["termsAndConditions_helperText--error"]}
               >
                 Please indicate that you have read and agree to the Terms and
                 Conditions
@@ -451,20 +455,18 @@ const CreditCardPaymentForm = (props) => {
             <FormHelperText error>{errors.submit}</FormHelperText>
           )}
 
-          {isOpenModal === true && (
-            <Portal container={ref.current}>
-              {console.log(isOpenModal)}
-              {/* <TermsModal open={isOpenModal} onClose={handleCloseModal} />*/}
-              <TermsModal title="My Modal" onClose={handleCloseModal} show={isOpenModal} />
+          {isOpenModal && (
+            <Portal container={divPortalRef.current}>
+              <TermsModal onClose={handleCloseModal} show={isOpenModal} />
             </Portal>
           )}
 
-          <section className={classes.actions}>
+          <section className={classes.actions} aria-label="Place Order">
             <Button
               disabled={isSubmitting}
-              fullWidth
-              type="submit"
               variant="contained"
+              type="submit"
+              fullWidth
             >
               {`Place order ( $${
                 props.totalcheckout === undefined

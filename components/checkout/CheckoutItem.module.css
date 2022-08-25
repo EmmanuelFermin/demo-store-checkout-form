@@ -3,15 +3,18 @@
   flex-direction: row;
   padding-left: 14px;
   margin-bottom: 13px;
-  font-size: 0.9375rem;
+  font-size: 0.9rem;
 }
 
 .item_name {
+  font-family: OpenSans;
   text-decoration: underline;
   color: blue;
+  font-weight: 400;
 }
 
 .item_price {
+  font-family: OpenSans;
   margin-left: auto;
   font-weight: 500;
 }
