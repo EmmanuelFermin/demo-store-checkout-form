@@ -279,7 +279,9 @@ const PaymentForm = (props) => {
                         id="cardExpMonth"
                         className={classes.errorCardExp}
                       >
-                        {"Month/Year is required with correct format/range"}
+                        {
+                          "Month/Year is required with correct format/rangeMONTH"
+                        }
                       </FormHelperText>
                     )}
                   <span className={classes.control_divider}>/</span>
@@ -302,16 +304,16 @@ const PaymentForm = (props) => {
                     id="cardExpYear"
                   />
                   {touched.cardExpYear &&
-                  errors.cardExpYear &&
-                  !errors.cardExpMonth ? (
-                    <FormHelperText
-                      id="cardExpYear"
-                      className={classes.errorCardExp}
-                    >
-                      {"Month/Year is required with correct format/range"}
-                    </FormHelperText>
-                  ) : (
-                    touched.cardExpMonth &&
+                    errors.cardExpYear &&
+                    !errors.cardExpMonth && (
+                      <FormHelperText
+                        id="cardExpYear"
+                        className={classes.errorCardExp}
+                      >
+                        {"Month/Year is required with correct format/rangeYEAR"}
+                      </FormHelperText>
+                    )}
+                  {touched.cardExpMonth &&
                     touched.cardExpYear &&
                     errors.cardExpYear &&
                     errors.cardExpMonth && (
@@ -321,8 +323,7 @@ const PaymentForm = (props) => {
                       >
                         {"Month & Year is required with correct format/range"}
                       </FormHelperText>
-                    )
-                  )}
+                    )}
                 </div>
               </div>
 
@@ -448,7 +449,6 @@ const PaymentForm = (props) => {
                 checked={values.isTermsAccepted === true ? true : false}
                 onChange={(e) => {
                   handleChange(e);
-                  console.log(touched.isTermsAccepted);
                   setFieldValue("isTermsAccepted", !values.isTermsAccepted);
                 }}
                 inputProps={{ "aria-label": "controlled" }}

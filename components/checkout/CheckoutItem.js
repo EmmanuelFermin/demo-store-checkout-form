@@ -7,7 +7,7 @@ const CheckoutItem = (props) => {
       <Link href={`/${props.name}`}>
         <a className={classes.item_name}>{props.name}</a>
       </Link>
-      <div className={classes.item_price}>${props.price}</div>
+      <div className={classes.item_price}>${props.price.toFixed(2)}</div>
     </li>
   );
 };

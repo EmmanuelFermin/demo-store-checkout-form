@@ -7,7 +7,8 @@ const MainHeader = () => {
     <header className={classes.header}>
       <Image src={logo} alt="Logo of Demo Store" width={30} height={30} />
       <h4 className={classes.title}>
-        <span>DEMO</span>STORE
+        <span className={classes.title_bold}>DEMO</span>
+        <span className={classes.title_light}>STORE</span>
       </h4>
     </header>
   );

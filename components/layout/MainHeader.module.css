@@ -3,15 +3,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
 }
 
 .title {
-  margin-left: 12px;
+  /* margin-top: 1px; */
+  margin-left: 11px;
   color: #6c6c6c;
   font-weight: 400;
 }
 
-.header span {
-  margin-right: 3px;
-  font-weight: bold;
+.title_bold {
+  margin-right: 4px;
+  font-weight: 700;
+  font-family: Helvetica;
+}
+
+.title_light {
+  font-family: Helvetica;
+  opacity: 0.7;
 }
