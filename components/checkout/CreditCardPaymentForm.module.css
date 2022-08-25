@@ -1,4 +1,5 @@
 .creditCardInformation {
+  /* width: 319px; */
   border: none;
   display: flex;
   padding-left: 0;
@@ -95,12 +96,13 @@
 }
 
 .creditCardInformation_column--bordered {
+  width: 319px;
   border-radius: 5px;
   border-width: 1px;
   border-color: #dde2e5;
   border-style: solid;
   padding: 18px 20px 7px 20px;
-  margin-right: 15px;
+  margin-right: 13px;
 }
 .column {
   padding-top: 21px;
