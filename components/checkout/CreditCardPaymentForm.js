@@ -18,6 +18,7 @@ import InfoIcon from "../../public/static/info.png";
 import TermsModal from "../terms-and-conditions/TermsModal";
 import CVVTooltip from "./CVVTooltip";
 import dateFormatToLocal from "../../utils/dateFormatToLocal";
+import formatToNameCase from "../../utils/formatToNameCase";
 
 // Main FC (Functional Component)
 const CreditCardPaymentForm = (props) => {
@@ -49,6 +50,7 @@ const CreditCardPaymentForm = (props) => {
 
     if (isNaN(valArray.join(""))) return;
     if (valArray.length === 17) return;
+    if (/[.]/.test(val)) return;
     if (valArray.length % 4 === 0 && valArray.length <= 15)
       setCcNumber(val + " ");
     else setCcNumber(val);
@@ -59,6 +61,7 @@ const CreditCardPaymentForm = (props) => {
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length === 3) return;
+    if (/[.]/.test(val)) return;
     if (isNaN(valArray.join(""))) return;
     else {
       if (/[0-9]|1[0-2]/.test(val)) setExpMonth(val);
@@ -71,6 +74,7 @@ const CreditCardPaymentForm = (props) => {
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length === 3) return;
+    if (/[.]/.test(val)) return;
     if (isNaN(valArray.join(""))) return;
     else setExpYear(val);
   };
@@ -78,10 +82,11 @@ const CreditCardPaymentForm = (props) => {
   const restrictAndFormatCardHolder = (e) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
+    const firstLetter = valArray[0];
 
     if (valArray.length >= 50) return;
     if (/[^a-zA-Z ]/.test(val)) return;
-    else setCardHolder(val);
+    else setCardHolder(formatToNameCase(val));
   };
 
   const formatAndSetCVV = (e) => {
@@ -89,6 +94,7 @@ const CreditCardPaymentForm = (props) => {
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length >= 4) return;
+    if (/[.]/.test(val)) return;
     if (isNaN(valArray.join(""))) return;
     else setCardCVV(val);
   };
@@ -191,7 +197,7 @@ const CreditCardPaymentForm = (props) => {
                   name="cardNum"
                   autoComplete="off"
                   error={Boolean(touched.cardNum && errors.cardNum)}
-                  onBlur={handleBlur}
+                  // onBlur={handleBlur}
                   onChange={(e) => {
                     handleChange(e);
                     formatAndSetCcNumber(e);
@@ -239,7 +245,7 @@ const CreditCardPaymentForm = (props) => {
                     name="cardExpMonth"
                     autoComplete="off"
                     error={Boolean(touched.cardExpMonth && errors.cardExpMonth)}
-                    onBlur={handleBlur}
+                    // onBlur={handleBlur}
                     onChange={(e) => {
                       handleChange(e);
                       formatAndSetCardExpMonth(e);
@@ -268,7 +274,7 @@ const CreditCardPaymentForm = (props) => {
                     name="cardExpYear"
                     autoComplete="off"
                     error={Boolean(touched.cardExpYear && errors.cardExpYear)}
-                    onBlur={handleBlur}
+                    // onBlur={handleBlur}
                     onChange={(e) => {
                       handleChange(e);
                       formatAndSetCardExpYear(e);
@@ -319,7 +325,7 @@ const CreditCardPaymentForm = (props) => {
                   name="cardHolder"
                   autoComplete="off"
                   error={Boolean(touched.cardHolder && errors.cardHolder)}
-                  onBlur={handleBlur}
+                  // onBlur={handleBlur}
                   onChange={(e) => {
                     handleChange(e);
                     restrictAndFormatCardHolder(e);
@@ -357,7 +363,7 @@ const CreditCardPaymentForm = (props) => {
                   name="cardCVV"
                   autoComplete="off"
                   error={Boolean(touched.cardCVV && errors.cardCVV)}
-                  onBlur={handleBlur}
+                  // onBlur={handleBlur}
                   onChange={(e) => {
                     handleChange(e);
                     formatAndSetCVV(e);
@@ -427,7 +433,7 @@ const CreditCardPaymentForm = (props) => {
                 inputProps={{ "aria-label": "controlled" }}
                 size="small"
                 checked={values.isTermsAccepted === true ? true : false}
-                onClick={() => (touched.isTermsAccepted = true)}
+                // onClick={() => (touched.isTermsAccepted = true)}
                 onChange={(e) => {
                   handleChange(e);
                   setFieldValue("isTermsAccepted", !values.isTermsAccepted);
