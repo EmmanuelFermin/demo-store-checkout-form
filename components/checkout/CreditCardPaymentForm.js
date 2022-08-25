@@ -264,9 +264,7 @@ const CreditCardPaymentForm = (props) => {
                         id="cardExpMonth"
                         className={classes.errorCardExp}
                       >
-                        {
-                          "Month/Year is required with correct format/rangeMONTH"
-                        }
+                        {"Month/Year is required with correct format/range"}
                       </FormHelperText>
                     )}
                   <span className={classes.control_divider}>/</span>
@@ -294,7 +292,7 @@ const CreditCardPaymentForm = (props) => {
                         id="cardExpYear"
                         className={classes.errorCardExp}
                       >
-                        {"Month/Year is required with correct format/rangeYEAR"}
+                        {"Month/Year is required with correct format/range"}
                       </FormHelperText>
                     )}
                   {touched.cardExpMonth &&
