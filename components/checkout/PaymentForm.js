@@ -18,6 +18,7 @@ import Image from "next/image";
 import CardIcon from "../../public/static/card-icon.png";
 import InfoIcon from "../../public/static/info.png";
 import TermsModal from "../terms-and-conditions/TermsModal";
+import CVVTooltip from "./CVVTooltip";
 
 const PaymentForm = (props) => {
   const [ccNumber, setCcNumber] = useState("");
@@ -384,14 +385,7 @@ const PaymentForm = (props) => {
                     endAdornment: (
                       <Tooltip
                         classes={{ tooltip: classes.customTooltip }}
-                        title={
-                          <React.Fragment>
-                            Tooltip with HTML
-                            <em>{"And here's"}</em> <b>{"some"}</b>{" "}
-                            <u>{"amazing content"}</u>.{" "}
-                            {"It's very engaging. Right?"}
-                          </React.Fragment>
-                        }
+                        title={<CVVTooltip />}
                         arrow
                       >
                         <InputAdornment position="end">
