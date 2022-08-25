@@ -32,10 +32,12 @@
   width: 180px;
   padding: 0 !important;
 }
-.btn_isGiftCard {
+.btn_isGiftCard,
+.btn_isGiftCard--active {
   width: 178px;
 }
-.btn_isPaypal {
+.btn_isPaypal,
+.btn_isPaypal--active {
   width: 178px;
 }
 
