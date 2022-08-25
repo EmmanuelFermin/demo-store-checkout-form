@@ -1,26 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import classes from "./CreditCardPaymentForm.module.css";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import {
-  Box,
   Button,
   Checkbox,
   FormHelperText,
-  FormGroup,
-  FormControlLabel,
   InputAdornment,
   TextField,
   InputLabel,
   Tooltip,
+  Portal,
 } from "@mui/material";
-import Image from "next/image";
 import CardIcon from "../../public/static/card-icon.png";
 import InfoIcon from "../../public/static/info.png";
 import TermsModal from "../terms-and-conditions/TermsModal";
 import CVVTooltip from "./CVVTooltip";
+import dateFormatToLocal from "../../utils/dateFormatToLocal";
+// import Portal from "../../HOC/Portal";
 
+// Main FC (Functional Component)
 const CreditCardPaymentForm = (props) => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = document.querySelector("#terms-modal");
+    // setMounted(true)
+  }, []);
+  console.log(ref.current);
   const [ccNumber, setCcNumber] = useState("");
   const [expMonth, setExpMonth] = useState("");
   const [expYear, setExpYear] = useState("");
@@ -33,7 +40,7 @@ const CreditCardPaymentForm = (props) => {
     const valArray = val.split(" ").join("").split("");
     let valSpace = val.split("");
 
-    // to work with backspace
+    // To work with backspace
     if (valSpace[valSpace.length - 1] == " ") {
       let valSpaceN = valSpace.slice(0, -2);
       val = valSpaceN.join("");
@@ -43,55 +50,39 @@ const CreditCardPaymentForm = (props) => {
 
     if (isNaN(valArray.join(""))) return;
     if (valArray.length === 17) return;
-    if (valArray.length % 4 === 0 && valArray.length <= 15) {
+    if (valArray.length % 4 === 0 && valArray.length <= 15)
       setCcNumber(val + " ");
-    } else {
-      setCcNumber(val);
-    }
+    else setCcNumber(val);
   };
 
-  const formatAndSetCardExp = (e, type) => {
+  const formatAndSetCardExpMonth = (e) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length === 3) return;
-    if (isNaN(valArray.join(""))) {
-      return;
-    } else {
-      if (type === "month") {
-        if (/[0-9]|1[0-2]/.test(val)) {
-          setExpMonth(val);
-        } else if (val === "") {
-          setExpMonth("");
-        }
-      }
-      if (type === "year" && valArray.length > 2) setExpYear(parseInt(val, 10));
-      if (type === "year") setExpYear(val);
+    if (isNaN(valArray.join(""))) return;
+    else {
+      if (/[0-9]|1[0-2]/.test(val)) setExpMonth(val);
+      if (val === "") setExpMonth("");
     }
   };
 
-  const formatAndSetCardExpYear = (e, type) => {
+  const formatAndSetCardExpYear = (e) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length === 3) return;
-    if (isNaN(valArray.join(""))) {
-      return;
-    } else {
-      setExpYear(val);
-    }
+    if (isNaN(valArray.join(""))) return;
+    else setExpYear(val);
   };
 
-  const restrictAndFormatHolder = (e) => {
+  const restrictAndFormatCardHolder = (e) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length >= 50) return;
-    if (/[^a-zA-Z ]/.test(val)) {
-      return;
-    } else {
-      setCardHolder(val);
-    }
+    if (/[^a-zA-Z ]/.test(val)) return;
+    else setCardHolder(val);
   };
 
   const formatAndSetCVV = (e) => {
@@ -99,24 +90,12 @@ const CreditCardPaymentForm = (props) => {
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length >= 4) return;
-    if (isNaN(valArray.join(""))) {
-      return;
-    } else {
-      setCardCVV(val);
-    }
+    if (isNaN(valArray.join(""))) return;
+    else setCardCVV(val);
   };
 
   const handleCloseModal = () => {
     setIsOpenModal(false);
-  };
-
-  const currentYYandMMToLocalDate = (month, year) => {
-    const d = new Date();
-    let currYear = d.getFullYear();
-    let yy = currYear.toString().substring(0, 2);
-
-    const newDateToISO = new Date(`${yy + year}`, `${month - 1}`);
-    return newDateToISO.toString();
   };
 
   return (
@@ -159,7 +138,7 @@ const CreditCardPaymentForm = (props) => {
             cardNum: values.cardNum.trim(),
             cardExpMonth: values.cardExpMonth.trim(),
             cardExpYear: values.cardExpYear.trim(),
-            cardExpiration: currentYYandMMToLocalDate(
+            cardExpiration: dateFormatToLocal(
               values.cardExpMonth,
               values.cardExpYear
             ),
@@ -262,7 +241,7 @@ const CreditCardPaymentForm = (props) => {
                     onBlur={handleBlur}
                     onChange={(e) => {
                       handleChange(e);
-                      formatAndSetCardExp(e, "month");
+                      formatAndSetCardExpMonth(e);
                     }}
                     value={(values.cardExpMonth = expMonth)}
                     type="text"
@@ -294,7 +273,7 @@ const CreditCardPaymentForm = (props) => {
                     onBlur={handleBlur}
                     onChange={(e) => {
                       handleChange(e);
-                      formatAndSetCardExpYear(e, "year");
+                      formatAndSetCardExpYear(e);
                     }}
                     inputProps={{ maxLength: 2 }}
                     value={(values.cardExpYear = expYear)}
@@ -347,7 +326,7 @@ const CreditCardPaymentForm = (props) => {
                   onBlur={handleBlur}
                   onChange={(e) => {
                     handleChange(e);
-                    restrictAndFormatHolder(e);
+                    restrictAndFormatCardHolder(e);
                   }}
                   value={(values.cardHolder = cardHolder)}
                   type="text"
@@ -452,10 +431,10 @@ const CreditCardPaymentForm = (props) => {
               />{" "}
               I accept the{" "}
               <span
-                className={classes.termsAndConditions_checkbox__portal}
+                className={classes["termsAndConditions_checkbox--underlined"]}
                 onClick={() => setIsOpenModal(true)}
               >
-                Terms and Condition
+                Terms and Conditions
               </span>
             </div>
             {touched.isTermsAccepted && errors.isTermsAccepted && (
@@ -472,7 +451,13 @@ const CreditCardPaymentForm = (props) => {
             <FormHelperText error>{errors.submit}</FormHelperText>
           )}
 
-          <TermsModal open={isOpenModal} onClose={handleCloseModal} />
+          {isOpenModal === true && (
+            <Portal container={ref.current}>
+              {console.log(isOpenModal)}
+              {/* <TermsModal open={isOpenModal} onClose={handleCloseModal} />*/}
+              <TermsModal title="My Modal" onClose={handleCloseModal} show={isOpenModal} />
+            </Portal>
+          )}
 
           <section className={classes.actions}>
             <Button

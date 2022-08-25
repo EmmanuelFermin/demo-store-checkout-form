@@ -155,7 +155,7 @@
   height: 0.85rem;
 }
 
-.termsAndConditions_checkbox__portal {
+.termsAndConditions_checkbox--underlined {
   color: #336881;
   margin-left: 3px;
   border-bottom: 2px dotted #336881;
@@ -168,6 +168,7 @@
   text-transform: none;
   padding: 11.5px;
   font-size: 14px;
+  border-radius: 6px;
 }
 
 .actions button:hover {
