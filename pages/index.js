@@ -1,6 +1,7 @@
 import { Fragment } from "react";
-import CheckoutList from "../components/checkout/CheckoutList";
-import MainHeader from "../components/layout/MainHeader";
+import Head from "next/head";
+import Header from "../components/layout/Header";
+import CheckoutBilling from "../components/checkout/CheckoutBilling";
 
 const DUMMY_PRODUCTS = [
   {
@@ -23,15 +24,21 @@ const DUMMY_SHIPPING = [
   },
 ];
 
-const CheckoutBilling = (props) => {
+const Home = (props) => {
+  const { products, shipping } = props;
+
   return (
     <Fragment>
-      <MainHeader />
-      <CheckoutList products={props.products} shipping={props.shipping} />
+      <Head>
+        <title>Demo Store</title>
+      </Head>
+      <Header />
+      <CheckoutBilling products={products} shipping={shipping} />
     </Fragment>
   );
 };
 
+//Hydrate page with DUMMY DATA and regenerate every 1 second
 export async function getStaticProps() {
   return {
     props: {
@@ -42,4 +49,4 @@ export async function getStaticProps() {
   };
 }
 
-export default CheckoutBilling;
+export default Home;

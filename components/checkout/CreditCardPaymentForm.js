@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import classes from "./PaymentForm.module.css";
+import classes from "./CreditCardPaymentForm.module.css";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import {
@@ -20,7 +20,7 @@ import InfoIcon from "../../public/static/info.png";
 import TermsModal from "../terms-and-conditions/TermsModal";
 import CVVTooltip from "./CVVTooltip";
 
-const PaymentForm = (props) => {
+const CreditCardPaymentForm = (props) => {
   const [ccNumber, setCcNumber] = useState("");
   const [expMonth, setExpMonth] = useState("");
   const [expYear, setExpYear] = useState("");
@@ -494,4 +494,4 @@ const PaymentForm = (props) => {
   );
 };
 
-export default PaymentForm;
+export default CreditCardPaymentForm;

@@ -6,20 +6,20 @@
   margin-top: 10px;
 }
 
-.title {
+.header_title {
   /* margin-top: 1px; */
   margin-left: 11px;
   color: #6c6c6c;
   font-weight: 400;
 }
 
-.title_bold {
+.header_title--bold {
   margin-right: 4px;
   font-weight: 700;
   font-family: Helvetica;
 }
 
-.title_light {
+.header_title--light {
   font-family: Helvetica;
   opacity: 0.7;
 }
