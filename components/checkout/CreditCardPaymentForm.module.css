@@ -17,7 +17,7 @@
   position: absolute;
   margin-left: 5px;
   white-space: nowrap;
-  color: #d32f2f;
+  color: #d32f2f !important;
   bottom: -23px;
 }
 
@@ -27,7 +27,7 @@
   bottom: -21px;
   margin-left: 5px;
   white-space: nowrap;
-  color: #d32f2f;
+  color: #d32f2f !important;
 }
 
 .errorCardCVV {
@@ -35,7 +35,7 @@
   width: 200px;
   top: 80px;
   margin-left: 5px;
-  color: #d32f2f;
+  color: #d32f2f !important;
 }
 
 .termsAndConditions_helperText--error {
