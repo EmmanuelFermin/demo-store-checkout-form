@@ -92,7 +92,7 @@
 }
 
 .endAdornment {
-  padding-right: 3px;
+  padding-right: 3px !important;
   /* padding-bottom: 2px; */
 }
 
