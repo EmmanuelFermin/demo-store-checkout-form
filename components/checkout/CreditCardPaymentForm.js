@@ -29,16 +29,37 @@ const CreditCardPaymentForm = (props) => {
   const [cardHolder, setCardHolder] = useState("");
   const [cardCVV, setCardCVV] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [cardNum0Validator, setCardNum0Validator] = useState([]);
+  const [is16DigitsAllZero, setIs16DigitsAllZero] = useState(false);
+  const [is16DigitsSomeNotZero, setIs16DigitsSomeNotZero] = useState(false);
 
   useEffect(() => {
     // Get root Node Element and assign to the Portal
     divPortalRef.current = document.querySelector("#terms-modal");
   }, []);
 
+  useEffect(() => {
+    //Since 0000 0000 0000 0000 is equal to 0 (1 digit)
+    if (cardNum0Validator.length >= 16) {
+      const allZero = cardNum0Validator.every((el) => Number(el) === 0);
+      const someNotZero = cardNum0Validator.some((el) => Number(el) !== 0);
+      setIs16DigitsAllZero(allZero);
+      setIs16DigitsSomeNotZero(someNotZero);
+    }
+
+    return () => {
+      setIs16DigitsAllZero(false);
+      setIs16DigitsSomeNotZero(false);
+    };
+  }, [cardNum0Validator]);
+
   const formatAndSetCcNumber = (e) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
     let valSpace = val.split("");
+
+    setCardNum0Validator(valArray);
+    console.log("Card Num Validator Inside", cardNum0Validator);
 
     // To work with backspace
     if (valSpace[valSpace.length - 1] == " ") {
@@ -115,7 +136,18 @@ const CreditCardPaymentForm = (props) => {
         submit: null,
       }}
       validationSchema={Yup.object().shape({
-        cardNum: Yup.number().required(),
+        cardNum: Yup.number()
+          .test("test-card", "Credit Card number is invalid", (value) => {
+            // Since 0 is also an integer, we have to check it
+            if (is16DigitsAllZero || is16DigitsSomeNotZero) {
+              return true;
+            }
+            // Detects 16 digits with spaces or dashes
+            if (/\b(?:[ -]*?)\d{16,19}\b/.test(value)) {
+              return true;
+            }
+          })
+          .required(),
         cardExpMonth: Yup.number().min(1).max(12).required(),
         cardExpYear: Yup.number().min(1).max(99).required(),
         cardHolder: Yup.string().max(50).required(),
