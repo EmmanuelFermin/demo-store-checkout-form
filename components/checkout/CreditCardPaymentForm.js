@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import classes from "./CreditCardPaymentForm.module.css";
 import * as Yup from "yup";
-import { Formik, FastField } from "formik";
+import { Formik } from "formik";
 import {
   Button,
   Checkbox,
@@ -19,11 +19,13 @@ import TermsModal from "../terms-and-conditions/TermsModal";
 import CVVTooltip from "./CVVTooltip";
 import dateFormatToLocal from "../../utils/dateFormatToLocal";
 import formatToNameCase from "../../utils/formatToNameCase";
+import NumberFormat from "react-number-format";
 
 // Main FC (Functional Component)
 const CreditCardPaymentForm = (props) => {
-  const divPortalRef = useRef();
-  const [ccNumber, setCcNumber] = useState("");
+  const divPortalTermsModalRef = useRef();
+  // We can refactor this with useReducer or Redux or custom hooks
+  // const [ccNumber, setCcNumber] = useState("");
   const [expMonth, setExpMonth] = useState("");
   const [expYear, setExpYear] = useState("");
   const [cardHolder, setCardHolder] = useState("");
@@ -35,11 +37,12 @@ const CreditCardPaymentForm = (props) => {
 
   useEffect(() => {
     // Get root Node Element and assign to the Portal
-    divPortalRef.current = document.querySelector("#terms-modal");
+    divPortalTermsModalRef.current = document.querySelector("#terms-modal");
   }, []);
 
   useEffect(() => {
     //Since 0000 0000 0000 0000 is equal to 0 (1 digit)
+    // Store digits and allow zeroes
     if (cardNum0Validator.length >= 16) {
       const allZero = cardNum0Validator.every((el) => Number(el) === 0);
       const someNotZero = cardNum0Validator.some((el) => Number(el) !== 0);
@@ -53,38 +56,84 @@ const CreditCardPaymentForm = (props) => {
     };
   }, [cardNum0Validator]);
 
+  // I WAS ABOUT TO MAKE MY OWN LOGIC FOR THIS BUT THIS WOULD TAKE A WHILE
   const formatAndSetCcNumber = (e) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
     let valSpace = val.split("");
 
+    // Put each digit into array
     setCardNum0Validator(valArray);
-    console.log("Card Num Validator Inside", cardNum0Validator);
+
+    // console.log("Val ", val);
+    // console.log("Val Array ", valArray);
+    // console.log("Val Space", valSpace);
+    // console.log("Val at the end ", val.charAt(1));
 
     // To work with backspace
-    if (valSpace[valSpace.length - 1] == " ") {
-      let valSpaceN = valSpace.slice(0, -2);
-      val = valSpaceN.join("");
-      setCcNumber(val);
-      return;
-    }
+    // if (valSpace[valSpace.length - 1] == " ") {
+    //   let valSpaceN = valSpace.slice(0, -1);
+    //   val = valSpaceN.join("");
+    //   setCcNumber(val.trim());
+    //   return;
+    // }
 
-    if (isNaN(valArray.join(""))) return;
-    if (valArray.length === 17) return;
-    if (/[.]/.test(val)) return;
-    if (valArray.length % 4 === 0 && valArray.length <= 15)
-      setCcNumber(val + " ");
-    else setCcNumber(val);
+    // if (isNaN(valArray.join(""))) return;
+    // if (valArray.length === 17) return;
+    // if (/[.]/.test(val)) return;
+
+    // if (
+    //   valArray.length % 4 === 0 &&
+    //   valArray.length >= 1 &&
+    //   valArray.length < 16
+    // )
+    //   setCcNumber(val + " ");
+    // else
+    //   setCcNumber(
+    //     val
+    //       .replace(/\s/g, "")
+    //       .replace(/(\d{4})/g, "$1 ")
+    //       .replace(/ $/g, "")
+    //   );
   };
+
+  // const findCaretPosition = (e) => {
+  //   var e = window.event || e;
+  //   var key = e.keyCode;
+  //   console.log("Current Key ", key);
+  //   console.log("Caret Position ", e.target.selectionStart);
+  //   console.log("Length ", cardNum0Validator);
+  //   if (e.target.selectionStart % 5 === 0) {
+  //     console.log("Position is in space");
+
+  //     if (key == 8 && cardNum0Validator.length === 16) {
+  //       // Backspace
+  //       e.preventDefault();
+  //     }
+  //   }
+  // };
+
+  // const disableSpacebarInCardNumField = () => {
+  //   var e = window.event || e;
+  //   var key = e.keyCode;
+  //   //space pressed
+  //   if (key == 32) {
+  //     //space
+  //     e.preventDefault();
+  //   }
+  // };
 
   const formatAndSetCardExpMonth = (e) => {
     let val = e.target.value;
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length === 3) return;
+    // Return if decimal pt is entered
     if (/[.]/.test(val)) return;
+    // Return if it's not a number
     if (isNaN(valArray.join(""))) return;
     else {
+      //Check and allow 0 or 00 as starting input then format
       if (/[0-9]|1[0-2]/.test(val)) setExpMonth(val);
       if (val === "") setExpMonth("");
     }
@@ -95,9 +144,15 @@ const CreditCardPaymentForm = (props) => {
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length === 3) return;
+    // Return if decimal pt is entered
     if (/[.]/.test(val)) return;
+    // Return if it's not a number
     if (isNaN(valArray.join(""))) return;
-    else setExpYear(val);
+    else {
+      //Check and allow 0 or 00 as starting input then format
+      if (/^[0-9][0-9]?$/.test(val)) setExpYear(val);
+      if (val === "") setExpYear("");
+    }
   };
 
   const restrictAndFormatCardHolder = (e) => {
@@ -106,6 +161,7 @@ const CreditCardPaymentForm = (props) => {
     const firstLetter = valArray[0];
 
     if (valArray.length >= 50) return;
+    // Return if it contains numbers/special characters
     if (/[^a-zA-Z ]/.test(val)) return;
     else setCardHolder(formatToNameCase(val));
   };
@@ -115,7 +171,9 @@ const CreditCardPaymentForm = (props) => {
     const valArray = val.split(" ").join("").split("");
 
     if (valArray.length >= 4) return;
+    // Return if decimal pt is entered
     if (/[.]/.test(val)) return;
+    // Return if it's not a number
     if (isNaN(valArray.join(""))) return;
     else setCardCVV(val);
   };
@@ -139,17 +197,35 @@ const CreditCardPaymentForm = (props) => {
         cardNum: Yup.number()
           .test("test-card", "Credit Card number is invalid", (value) => {
             // Since 0 is also an integer, we have to check it
+            console.log("Card number ", value);
             if (is16DigitsAllZero || is16DigitsSomeNotZero) {
               return true;
             }
-            // Detects 16 digits with spaces or dashes
-            if (/\b(?:[ -]*?)\d{16,19}\b/.test(value)) {
+
+            // Detects and Validates 16 digits with spaces or dashes
+            if (/\b(?:[ -]*?)\d{16}\b/.test(value)) {
               return true;
             }
           })
           .required(),
-        cardExpMonth: Yup.number().min(1).max(12).required(),
-        cardExpYear: Yup.number().min(1).max(99).required(),
+        cardExpMonth: Yup.string()
+          .test("test-month", "Month is required", (value) => {
+            if (/0[1-9]|1[0-2]/.test(value)) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .required(),
+        cardExpYear: Yup.string()
+          .test("test-year", "Year is required", (value) => {
+            if (/^[0-9][0-9]?$/.test(value)) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .required(),
         cardHolder: Yup.string().max(50).required(),
         cardCVV: Yup.string().min(3).max(3).required(),
         isTermsAccepted: Yup.bool().oneOf(
@@ -168,7 +244,9 @@ const CreditCardPaymentForm = (props) => {
               "Please indicate that you have read and agree to the Terms and Conditions"
             );
           }
-          // Assign API CALL here
+          // Assign API CALL here (e.g. Payment Element to the Stripe API)
+          // Storing credit card information to the database is not advisable.
+          // This is just an example of getting payload
           console.log({
             cardNum: values.cardNum.trim(),
             cardExpMonth: values.cardExpMonth.trim(),
@@ -223,18 +301,20 @@ const CreditCardPaymentForm = (props) => {
                 >
                   Card number
                 </InputLabel>
-                <TextField
-                  aria-describedby="cardNum"
+                <NumberFormat
+                  aria-describedby="Card Number"
                   id="cardNum"
                   name="cardNum"
                   autoComplete="off"
                   error={Boolean(touched.cardNum && errors.cardNum)}
                   // onBlur={handleBlur}
+                  // onKeyUp={findCaretPosition}
+                  // onKeyDown={disableSpacebarInCardNumField}
                   onChange={(e) => {
                     handleChange(e);
                     formatAndSetCcNumber(e);
                   }}
-                  value={(values.cardNum = ccNumber)}
+                  value={values.cardNum}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -254,6 +334,8 @@ const CreditCardPaymentForm = (props) => {
                   size="small"
                   type="text"
                   fullWidth
+                  format="#### #### #### ####"
+                  customInput={TextField}
                 />
                 {touched.cardNum && errors.cardNum && (
                   <FormHelperText id="cardNum" className={classes.errorCardNum}>
@@ -272,7 +354,7 @@ const CreditCardPaymentForm = (props) => {
                 </InputLabel>
                 <div className={classes.control_children}>
                   <TextField
-                    aria-describedby="cardExpMonth"
+                    aria-describedby="Card Expiration"
                     id="cardExpMonth"
                     name="cardExpMonth"
                     autoComplete="off"
@@ -301,7 +383,7 @@ const CreditCardPaymentForm = (props) => {
                     )}
                   <span className={classes.control_divider}>/</span>
                   <TextField
-                    name="cardExpYear"
+                    name="Card Expiration"
                     autoComplete="off"
                     error={Boolean(touched.cardExpYear && errors.cardExpYear)}
                     // onBlur={handleBlur}
@@ -350,7 +432,7 @@ const CreditCardPaymentForm = (props) => {
                   {"Cardholder's name"}
                 </InputLabel>
                 <TextField
-                  aria-describedby="cardHolder"
+                  aria-describedby="Cardholder's Name"
                   id="cardHolder"
                   name="cardHolder"
                   autoComplete="off"
@@ -388,7 +470,7 @@ const CreditCardPaymentForm = (props) => {
                   CVV/CVC
                 </InputLabel>
                 <TextField
-                  aria-describedby="cardCVV"
+                  aria-describedby="Card CVV/CVC"
                   id="cardCVV"
                   name="cardCVV"
                   autoComplete="off"
@@ -492,7 +574,7 @@ const CreditCardPaymentForm = (props) => {
           )}
 
           {isOpenModal && (
-            <Portal container={divPortalRef.current}>
+            <Portal container={divPortalTermsModalRef.current}>
               <TermsModal onClose={handleCloseModal} show={isOpenModal} />
             </Portal>
           )}
