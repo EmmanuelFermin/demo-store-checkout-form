@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import Image from "next/image";
 import classes from "./CreditCardPaymentForm.module.css";
 import * as Yup from "yup";
@@ -20,16 +20,29 @@ import CVVTooltip from "./CVVTooltip";
 import dateFormatToLocal from "../../utils/dateFormatToLocal";
 import formatToNameCase from "../../utils/formatToNameCase";
 import NumberFormat from "react-number-format";
+import { CreditCardFormContext } from "../../contexts/CreditCardFormContext";
 
 // Main FC (Functional Component)
 const CreditCardPaymentForm = (props) => {
+  const {
+    cardNum,
+    setCardNum,
+    cardHolder,
+    setCardHolder,
+    cardExpMonth,
+    setCardExpMonth,
+    cardExpYear,
+    setCardExpYear,
+    cardCVV,
+    setCardCVV,
+    isTermsAccepted,
+    setIsTermsAccepted,
+  } = useContext(CreditCardFormContext);
   const divPortalTermsModalRef = useRef();
   // We can refactor this with useReducer or Redux or custom hooks
-
-  const [expMonth, setExpMonth] = useState("");
-  const [expYear, setExpYear] = useState("");
-  const [cardHolder, setCardHolder] = useState("");
-  const [cardCVV, setCardCVV] = useState("");
+  // const [cardExpMonth, setCardExpMonth] = useState("");
+  // const [cardExpYear, setCardExpYear] = useState("");
+  // const [cardCVV, setCardCVV] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   useEffect(() => {
@@ -48,8 +61,8 @@ const CreditCardPaymentForm = (props) => {
     if (isNaN(valArray.join(""))) return;
     else {
       //Check and allow 0 or 00 as starting input then format
-      if (/[0-9]|1[0-2]/.test(val)) setExpMonth(val);
-      if (val === "") setExpMonth("");
+      if (/[0-9]|1[0-2]/.test(val)) setCardExpMonth(val);
+      if (val === "") setCardExpMonth("");
     }
   };
 
@@ -64,8 +77,8 @@ const CreditCardPaymentForm = (props) => {
     if (isNaN(valArray.join(""))) return;
     else {
       //Check and allow 0 or 00 as starting input then format
-      if (/[0-9]|1[0-2]/.test(val)) setExpYear(val);
-      if (val === "") setExpYear("");
+      if (/[0-9]|1[0-2]/.test(val)) setCardExpYear(val);
+      if (val === "") setCardExpYear("");
     }
   };
 
@@ -99,12 +112,12 @@ const CreditCardPaymentForm = (props) => {
   return (
     <Formik
       initialValues={{
-        cardNum: "",
-        cardExpMonth: "",
-        cardExpYear: "",
-        cardHolder: "",
-        cardCVV: "",
-        isTermsAccepted: false,
+        cardNum: cardNum,
+        cardExpMonth: cardExpMonth,
+        cardExpYear: cardExpYear,
+        cardHolder: cardHolder,
+        cardCVV: cardCVV,
+        isTermsAccepted: isTermsAccepted,
         submit: null,
       }}
       validationSchema={Yup.object().shape({
@@ -170,10 +183,12 @@ const CreditCardPaymentForm = (props) => {
             totalPrice: props.totalcheckout + props.shipping,
           });
 
-          setExpMonth("");
-          setExpYear("");
+          setCardNum("");
+          setCardExpMonth("");
+          setCardExpYear("");
           setCardHolder("");
           setCardCVV("");
+          setIsTermsAccepted(false);
           resetForm();
           setStatus({ success: true });
           setSubmitting(false);
@@ -217,8 +232,9 @@ const CreditCardPaymentForm = (props) => {
                   error={Boolean(touched.cardNum && errors.cardNum)}
                   onChange={(e) => {
                     handleChange(e);
+                    setCardNum(e.target.value);
                   }}
-                  value={values.cardNum}
+                  value={(values.cardNum = cardNum)}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -268,7 +284,7 @@ const CreditCardPaymentForm = (props) => {
                       handleChange(e);
                       formatAndSetCardExpMonth(e);
                     }}
-                    value={(values.cardExpMonth = expMonth)}
+                    value={(values.cardExpMonth = cardExpMonth)}
                     inputProps={{ maxLength: 2 }}
                     sx={{ width: "43px" }}
                     variant="outlined"
@@ -297,7 +313,7 @@ const CreditCardPaymentForm = (props) => {
                       formatAndSetCardExpYear(e);
                     }}
                     inputProps={{ maxLength: 2 }}
-                    value={(values.cardExpYear = expYear)}
+                    value={(values.cardExpYear = cardExpYear)}
                     type="text"
                     variant="outlined"
                     size="small"
@@ -449,11 +465,12 @@ const CreditCardPaymentForm = (props) => {
                 }
                 inputProps={{ "aria-label": "controlled" }}
                 size="small"
-                checked={values.isTermsAccepted === true ? true : false}
+                checked={isTermsAccepted === true ? true : false}
                 // onClick={() => (touched.isTermsAccepted = true)}
                 onChange={(e) => {
                   handleChange(e);
-                  setFieldValue("isTermsAccepted", !values.isTermsAccepted);
+                  setIsTermsAccepted(!isTermsAccepted);
+                  // setFieldValue("isTermsAccepted", !values.isTermsAccepted);
                 }}
               />{" "}
               I accept the{" "}
