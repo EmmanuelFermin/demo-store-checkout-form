@@ -48,7 +48,6 @@ const CheckoutBilling = ({ products, shipping }) => {
   // Handles the available Payment Method Tabs
   const handleTabsChange = (event) => {
     const { value } = event.target;
-    console.log(value);
     setCurrentTab(value);
   };
 

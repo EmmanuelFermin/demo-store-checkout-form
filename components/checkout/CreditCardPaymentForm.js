@@ -25,103 +25,17 @@ import NumberFormat from "react-number-format";
 const CreditCardPaymentForm = (props) => {
   const divPortalTermsModalRef = useRef();
   // We can refactor this with useReducer or Redux or custom hooks
-  // const [ccNumber, setCcNumber] = useState("");
+
   const [expMonth, setExpMonth] = useState("");
   const [expYear, setExpYear] = useState("");
   const [cardHolder, setCardHolder] = useState("");
   const [cardCVV, setCardCVV] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [cardNum0Validator, setCardNum0Validator] = useState([]);
-  const [is16DigitsAllZero, setIs16DigitsAllZero] = useState(false);
-  const [is16DigitsSomeNotZero, setIs16DigitsSomeNotZero] = useState(false);
 
   useEffect(() => {
     // Get root Node Element and assign to the Portal
     divPortalTermsModalRef.current = document.querySelector("#terms-modal");
   }, []);
-
-  useEffect(() => {
-    //Since 0000 0000 0000 0000 is equal to 0 (1 digit)
-    // Store digits and allow zeroes
-    if (cardNum0Validator.length >= 16) {
-      const allZero = cardNum0Validator.every((el) => Number(el) === 0);
-      const someNotZero = cardNum0Validator.some((el) => Number(el) !== 0);
-      setIs16DigitsAllZero(allZero);
-      setIs16DigitsSomeNotZero(someNotZero);
-    }
-
-    return () => {
-      setIs16DigitsAllZero(false);
-      setIs16DigitsSomeNotZero(false);
-    };
-  }, [cardNum0Validator]);
-
-  // I WAS ABOUT TO MAKE MY OWN LOGIC FOR THIS BUT THIS WOULD TAKE A WHILE
-  const formatAndSetCcNumber = (e) => {
-    let val = e.target.value;
-    const valArray = val.split(" ").join("").split("");
-    let valSpace = val.split("");
-
-    // Put each digit into array
-    setCardNum0Validator(valArray);
-
-    // console.log("Val ", val);
-    // console.log("Val Array ", valArray);
-    // console.log("Val Space", valSpace);
-    // console.log("Val at the end ", val.charAt(1));
-
-    // To work with backspace
-    // if (valSpace[valSpace.length - 1] == " ") {
-    //   let valSpaceN = valSpace.slice(0, -1);
-    //   val = valSpaceN.join("");
-    //   setCcNumber(val.trim());
-    //   return;
-    // }
-
-    // if (isNaN(valArray.join(""))) return;
-    // if (valArray.length === 17) return;
-    // if (/[.]/.test(val)) return;
-
-    // if (
-    //   valArray.length % 4 === 0 &&
-    //   valArray.length >= 1 &&
-    //   valArray.length < 16
-    // )
-    //   setCcNumber(val + " ");
-    // else
-    //   setCcNumber(
-    //     val
-    //       .replace(/\s/g, "")
-    //       .replace(/(\d{4})/g, "$1 ")
-    //       .replace(/ $/g, "")
-    //   );
-  };
-
-  // const findCaretPosition = (e) => {
-  //   var e = window.event || e;
-  //   var key = e.keyCode;
-  //   console.log("Current Key ", key);
-  //   console.log("Caret Position ", e.target.selectionStart);
-  //   console.log("Length ", cardNum0Validator);
-  //   if (e.target.selectionStart % 5 === 0) {
-  //     console.log("Position is in space");
-
-  //     if (key == 8 && cardNum0Validator.length === 16) {
-  //       // Backspace
-  //       e.preventDefault();
-  //     }
-  //   }
-  // };
-
-  // const disableSpacebarInCardNumField = () => {
-  //   var e = window.event || e;
-  //   var key = e.keyCode;
-  //   //space pressed
-  //   if (key == 32) {
-  //     //space
-  //     e.preventDefault();
-  //   }
-  // };
 
   const formatAndSetCardExpMonth = (e) => {
     let val = e.target.value;
@@ -150,7 +64,7 @@ const CreditCardPaymentForm = (props) => {
     if (isNaN(valArray.join(""))) return;
     else {
       //Check and allow 0 or 00 as starting input then format
-      if (/^[0-9][0-9]?$/.test(val)) setExpYear(val);
+      if (/[0-9]|1[0-2]/.test(val)) setExpYear(val);
       if (val === "") setExpYear("");
     }
   };
@@ -194,17 +108,14 @@ const CreditCardPaymentForm = (props) => {
         submit: null,
       }}
       validationSchema={Yup.object().shape({
-        cardNum: Yup.number()
+        cardNum: Yup.string()
           .test("test-card", "Credit Card number is invalid", (value) => {
-            // Since 0 is also an integer, we have to check it
-            console.log("Card number ", value);
-            if (is16DigitsAllZero || is16DigitsSomeNotZero) {
-              return true;
-            }
-
-            // Detects and Validates 16 digits with spaces or dashes
-            if (/\b(?:[ -]*?)\d{16}\b/.test(value)) {
-              return true;
+            if (value !== undefined) {
+              const arr = value.split(" ");
+              const newString = arr.join("");
+              if (newString.length === 16) {
+                return true;
+              }
             }
           })
           .required(),
@@ -219,10 +130,8 @@ const CreditCardPaymentForm = (props) => {
           .required(),
         cardExpYear: Yup.string()
           .test("test-year", "Year is required", (value) => {
-            if (/^[0-9][0-9]?$/.test(value)) {
+            if (/^[0-9][0-9]$/.test(value)) {
               return true;
-            } else {
-              return false;
             }
           })
           .required(),
@@ -261,7 +170,6 @@ const CreditCardPaymentForm = (props) => {
             totalPrice: props.totalcheckout + props.shipping,
           });
 
-          setCcNumber("");
           setExpMonth("");
           setExpYear("");
           setCardHolder("");
@@ -307,12 +215,8 @@ const CreditCardPaymentForm = (props) => {
                   name="cardNum"
                   autoComplete="off"
                   error={Boolean(touched.cardNum && errors.cardNum)}
-                  // onBlur={handleBlur}
-                  // onKeyUp={findCaretPosition}
-                  // onKeyDown={disableSpacebarInCardNumField}
                   onChange={(e) => {
                     handleChange(e);
-                    formatAndSetCcNumber(e);
                   }}
                   value={values.cardNum}
                   InputProps={{
@@ -383,7 +287,8 @@ const CreditCardPaymentForm = (props) => {
                     )}
                   <span className={classes.control_divider}>/</span>
                   <TextField
-                    name="Card Expiration"
+                    aria-describedby="Card Expiration"
+                    name="cardExpYear"
                     autoComplete="off"
                     error={Boolean(touched.cardExpYear && errors.cardExpYear)}
                     // onBlur={handleBlur}
