@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import Head from "next/head";
-import Header from "../components/layout/Header";
+import Header from "../components/header/Header";
 import CheckoutBilling from "../components/checkout/CheckoutBilling";
 
 const DUMMY_PRODUCTS = [

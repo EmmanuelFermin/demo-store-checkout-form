@@ -21,9 +21,14 @@ import dateFormatToLocal from "../../utils/dateFormatToLocal";
 import formatToNameCase from "../../utils/formatToNameCase";
 import NumberFormat from "react-number-format";
 import { CreditCardFormContext } from "../../contexts/CreditCardFormContext";
+import { openModal } from "../../slices/terms-modal";
+import { useDispatch, useSelector } from "../../store";
 
 // Main FC (Functional Component)
 const CreditCardPaymentForm = (props) => {
+  const dispatch = useDispatch();
+  const divPortalTermsModalRef = useRef();
+  const { isOpenTermsModal } = useSelector((state) => state.termsModal);
   const {
     cardNum,
     setCardNum,
@@ -38,12 +43,6 @@ const CreditCardPaymentForm = (props) => {
     isTermsAccepted,
     setIsTermsAccepted,
   } = useContext(CreditCardFormContext);
-  const divPortalTermsModalRef = useRef();
-  // We can refactor this with useReducer or Redux or custom hooks
-  // const [cardExpMonth, setCardExpMonth] = useState("");
-  // const [cardExpYear, setCardExpYear] = useState("");
-  // const [cardCVV, setCardCVV] = useState("");
-  const [isOpenModal, setIsOpenModal] = useState(false);
 
   useEffect(() => {
     // Get root Node Element and assign to the Portal
@@ -106,7 +105,7 @@ const CreditCardPaymentForm = (props) => {
   };
 
   const handleCloseModal = () => {
-    setIsOpenModal(false);
+    dispatch(openModal());
   };
 
   return (
@@ -476,7 +475,7 @@ const CreditCardPaymentForm = (props) => {
               I accept the{" "}
               <span
                 className={classes["termsAndConditions_checkbox--underlined"]}
-                onClick={() => setIsOpenModal(true)}
+                onClick={() => dispatch(openModal())}
               >
                 Terms and Conditions
               </span>
@@ -495,9 +494,9 @@ const CreditCardPaymentForm = (props) => {
             <FormHelperText error>{errors.submit}</FormHelperText>
           )}
 
-          {isOpenModal && (
+          {isOpenTermsModal && (
             <Portal container={divPortalTermsModalRef.current}>
-              <TermsModal onClose={handleCloseModal} show={isOpenModal} />
+              <TermsModal onClose={handleCloseModal} show={isOpenTermsModal} />
             </Portal>
           )}
 

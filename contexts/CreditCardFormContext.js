@@ -1,5 +1,7 @@
 import { createContext, useState } from "react";
+// Just a sample on how to use Context API
 
+//Improve intellisense
 export const CreditCardFormContext = createContext({
   cardNum: "",
   setCardNum: () => {},
@@ -15,6 +17,7 @@ export const CreditCardFormContext = createContext({
   setIsTermsAccepted: () => {},
 });
 
+// Main Provider Function for Parent App
 export const CreditCardFormContextProvider = (props) => {
   const [cardNum, setCardNum] = useState("");
   const [cardExpMonth, setCardExpMonth] = useState("");
@@ -23,23 +26,23 @@ export const CreditCardFormContextProvider = (props) => {
   const [cardCVV, setCardCVV] = useState("");
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
-  const cardNumHandler = (name) => {
-    setCardNum(name);
+  const cardNumHandler = (number) => {
+    setCardNum(number);
   };
-  const cardExpMonthHandler = (name) => {
-    setCardExpMonth(name);
+  const cardExpMonthHandler = (month) => {
+    setCardExpMonth(month);
   };
-  const cardExpYearHandler = (name) => {
-    setCardExpYear(name);
+  const cardExpYearHandler = (year) => {
+    setCardExpYear(year);
   };
   const cardHolderHandler = (name) => {
     setCardHolder(name);
   };
-  const cardCVVHandler = (name) => {
-    setCardCVV(name);
+  const cardCVVHandler = (cvv) => {
+    setCardCVV(cvv);
   };
-  const isTermsAcceptedHandler = (name) => {
-    setIsTermsAccepted(name);
+  const isTermsAcceptedHandler = (isAccepted) => {
+    setIsTermsAccepted(isAccepted);
   };
 
   return (
